@@ -1,0 +1,57 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        npm install -g html-minifier css-minify js-minify
+        
+    - name: Minify HTML files
+      run: |
+        for file in *.html; do
+          html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true "$file" -o "dist/$file"
+        done
+        
+    - name: Minify CSS files
+      run: |
+        mkdir -p dist/css
+        for file in css/*.css; do
+          css-minify -f "$file" -o "dist/$file"
+        done
+        
+    - name: Minify JavaScript files
+      run: |
+        mkdir -p dist/js
+        for file in js/*.js; do
+          js-minify "$file" -o "dist/$file"
+        done
+        
+    - name: Copy images
+      run: |
+        mkdir -p dist/images
+        cp -r images/* dist/images/ 2>/dev/null || true
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+        cname: edgartchissingui.dev

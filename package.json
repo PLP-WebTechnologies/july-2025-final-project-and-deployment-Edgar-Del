@@ -1,0 +1,65 @@
+{
+  "name": "edgar-portfolio",
+  "version": "1.0.0",
+  "description": "Edgar Tchissingui's professional web developer portfolio",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000 --open=/",
+    "build": "npm run minify",
+    "minify": "npm run minify:html && npm run minify:css && npm run minify:js",
+    "minify:html": "html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true *.html -o dist/",
+    "minify:css": "mkdir -p dist/css && css-minify -f css/*.css -o dist/css/",
+    "minify:js": "mkdir -p dist/js && js-minify js/*.js -o dist/js/",
+    "copy:assets": "mkdir -p dist/images && cp -r images/* dist/images/ 2>/dev/null || true",
+    "dist": "npm run build && npm run copy:assets",
+    "validate": "npm run validate:html && npm run validate:css",
+    "validate:html": "html-validate *.html",
+    "validate:css": "stylelint css/*.css",
+    "lint:js": "eslint js/*.js",
+    "test": "npm run validate && npm run lint:js",
+    "deploy:gh": "npm run dist && gh-pages -d dist",
+    "deploy:netlify": "npm run dist && netlify deploy --prod --dir=dist",
+    "clean": "rm -rf dist",
+    "serve": "npm run dist && live-server --port=3000 --open=/dist/"
+  },
+  "keywords": [
+    "portfolio",
+    "web-developer",
+    "frontend",
+    "responsive",
+    "modern",
+    "html5",
+    "css3",
+    "javascript"
+  ],
+  "author": "Edgar Tchissingui",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/edgartchissingui/portfolio.git"
+  },
+  "homepage": "https://edgartchissingui.github.io/portfolio",
+  "bugs": {
+    "url": "https://github.com/edgartchissingui/portfolio/issues"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "html-minifier": "^4.0.0",
+    "css-minify": "^1.0.1",
+    "js-minify": "^1.0.0",
+    "gh-pages": "^5.0.0",
+    "html-validate": "^8.0.0",
+    "stylelint": "^15.0.0",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
