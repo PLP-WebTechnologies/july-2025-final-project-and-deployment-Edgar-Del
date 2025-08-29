@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initActiveNavigation();
     initSmoothScrolling();
     initScrollEffects();
+    initSkillLevels();
 });
 
 // Mobile Menu Functionality
@@ -60,6 +61,17 @@ function initScrollAnimations() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('animate');
+                
+                // Animate skill level bars
+                if (entry.target.classList.contains('skill-card')) {
+                    const levelFill = entry.target.querySelector('.level-fill');
+                    if (levelFill) {
+                        setTimeout(() => {
+                            const targetWidth = levelFill.dataset.targetWidth || '0%';
+                            levelFill.style.width = targetWidth;
+                        }, 200);
+                    }
+                }
             }
         });
     }, observerOptions);
@@ -299,6 +311,23 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Initialize Skill Levels
+function initSkillLevels() {
+    const skillCards = document.querySelectorAll('.skill-card');
+    
+    skillCards.forEach(card => {
+        const levelFill = card.querySelector('.level-fill');
+        if (levelFill) {
+            // Set initial width to 0 for animation
+            const targetWidth = levelFill.style.width;
+            levelFill.style.width = '0%';
+            
+            // Store target width for later animation
+            levelFill.dataset.targetWidth = targetWidth;
+        }
+    });
+}
 
 // Export functions for use in other scripts
 window.Utils = {
